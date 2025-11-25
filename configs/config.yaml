@@ -1,0 +1,145 @@
+project:
+  name: "Dementia Nutrition ML"
+  version: "1.0.0"
+  random_seed: 42
+
+data:
+  raw_path: "data/raw/"
+  processed_path: "data/processed/"
+  
+  # Data sources
+  sources:
+    - nhanes
+    - adni
+    - ukbiobank
+    - elsa
+  
+  # Outcome definitions
+  outcomes:
+    primary: "incident_dementia"
+    secondary: 
+      - "cognitive_decline_slope"
+      - "mci_to_ad_conversion"
+      - "time_to_event"
+  
+  # Feature categories
+  features:
+    dietary:
+      - "mind_score"
+      - "mediterranean_score"
+      - "food_groups"
+      - "nutrient_intake"
+    
+    genetic:
+      - "apoe_e4_status"
+    
+    clinical:
+      - "age"
+      - "sex"
+      - "bmi"
+      - "comorbidities"
+      - "medications"
+    
+    socioeconomic:
+      - "education"
+      - "income"
+      - "employment"
+
+preprocessing:
+  imputation_method: "mice"
+  n_imputations: 5
+  normalization: "standard"
+  
+  diet_harmonization:
+    ffq_to_nutrients: true
+    food_groups: 15
+    pca_components: 10
+
+causal_inference:
+  methods:
+    - "propensity_score"
+    - "ipw"
+    - "doubly_robust"
+    - "dr_learner"
+  
+  propensity_model: "xgboost"
+  outcome_model: "lightgbm"
+  
+  trial_emulation:
+    eligibility: "age>=50 & no_baseline_dementia"
+    treatment_strategies:
+      - "adopt_mind_diet"
+      - "adopt_mediterranean_diet"
+      - "usual_care"
+    follow_up_years: 10
+
+models:
+  hte_estimators:
+    - name: "causal_forest"
+      type: "grf"
+      params:
+        n_estimators: 2000
+        min_samples_leaf: 10
+    
+    - name: "x_learner"
+      type: "econml"
+      params:
+        base_model: "xgboost"
+    
+    - name: "dr_learner"
+      type: "econml"
+      params:
+        model_propensity: "xgboost"
+        model_regression: "lightgbm"
+  
+  survival:
+    model: "cox_ph"
+    baseline_hazard: "breslow"
+
+policy_learning:
+  method: "contextual_bandit"
+  constraints:
+    adherence_threshold: 0.7
+    safety_check: true
+    resource_limit: 100  # budget per person
+  
+  optimization:
+    solver: "cvxpy"
+    objective: "maximize_risk_reduction"
+
+explainability:
+  methods:
+    - "shap"
+    - "pdp"
+    - "ale"
+  
+  subgroup_analysis:
+    - "apoe_e4_carriers"
+    - "age_65plus"
+    - "high_baseline_risk"
+
+evaluation:
+  cv_folds: 5
+  metrics:
+    - "cate_rmse"
+    - "policy_value"
+    - "qini_coefficient"
+    - "uplift"
+  
+  sensitivity_analyses:
+    - "unmeasured_confounding"
+    - "missing_data_mechanism"
+    - "outcome_misclassification"
+
+deployment:
+  api:
+    host: "0.0.0.0"
+    port: 8000
+  
+  app:
+    title: "Personalized Dementia Prevention Advisor"
+    description: "ML-assisted dietary optimization tool"
+  
+  mlflow:
+    tracking_uri: "mlruns/"
+    experiment_name: "dementia_nutrition"

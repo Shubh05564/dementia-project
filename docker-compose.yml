@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./configs:/app/configs
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
+  
+  streamlit:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - api
+    command: streamlit run src/api/app.py --server.port 8501 --server.address 0.0.0.0

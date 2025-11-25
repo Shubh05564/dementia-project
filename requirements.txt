@@ -1,0 +1,56 @@
+# Core data science
+pandas>=2.0.0
+numpy>=1.24.0
+scipy>=1.10.0
+scikit-learn>=1.3.0
+
+# Machine Learning
+xgboost>=2.0.0
+lightgbm>=4.0.0
+catboost>=1.2.0
+
+# Causal Inference & HTE
+econml>=0.14.0
+causalml>=0.14.0
+dowhy>=0.10.0
+
+# Survival Analysis
+lifelines>=0.27.0
+scikit-survival>=0.21.0
+
+# Optimization
+cvxpy>=1.4.0
+
+# Explainability
+shap>=0.43.0
+alibi>=0.9.0
+pdpbox>=0.2.1
+
+# Imputation & preprocessing
+scikit-learn>=1.3.0
+fancyimpute>=0.7.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.14.0
+
+# API & Deployment
+fastapi>=0.104.0
+uvicorn>=0.24.0
+streamlit>=1.28.0
+pydantic>=2.4.0
+
+# Database
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0
+
+# MLOps
+mlflow>=2.8.0
+optuna>=3.4.0
+
+# Utilities
+python-dotenv>=1.0.0
+pyyaml>=6.0
+joblib>=1.3.0
+tqdm>=4.66.0
